@@ -1,0 +1,999 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <title>HRM Dashboard | Conca</title>
+    <link href="./assets/vendor/bootstrap-5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+
+      body {
+        
+      }
+
+      .app-shell { min-height: 100vh; }
+      .min-w-0 { min-width: 0; }
+      .sidebar {
+        width: 258px;
+        min-height: 100vh;
+        background: var(--bs-body-bg);
+        border-right: 1px solid var(--line);
+      }
+      .brand-mark {
+        display: inline-flex;
+        width: 32px;
+        height: 32px;
+        flex: 0 0 32px;
+        align-items: center;
+        justify-content: center;
+        border-radius: .4rem;
+        color: #fff;
+        background: linear-gradient(135deg, #a45bff, #f254c9 58%, #ffc55b);
+      }
+      .brand-name { color: #25252b; font-family: Georgia, "Times New Roman", serif; }
+      .sidebar .nav-link {
+        min-height: 40px;
+        color: var(--bs-secondary-color);
+        border-radius: .45rem;
+        padding: .55rem .65rem;
+        white-space: nowrap;
+        transition: none;
+      }
+      .sidebar .nav-link:hover, .sidebar .nav-link.active,
+      .sidebar .sidebar-menu-toggle[aria-expanded="true"] {
+        color: #4a4b51;
+        background: var(--bs-tertiary-bg);
+      }
+      .sidebar .section-label {
+        color: #92939a;
+        font-size: .875rem;
+        font-weight: 400;
+      }
+      .sidebar-chevron { margin-left: auto; }
+      .sidebar-menu-toggle {
+        width: 100%;
+        border: 0;
+        font: inherit;
+        text-align: left;
+      }
+      .sidebar-menu-toggle .sidebar-chevron { transition: transform .2s ease; }
+      .sidebar-menu-toggle[aria-expanded="true"] .sidebar-chevron { transform: rotate(90deg); }
+      .sidebar-submenu {
+        margin-left: .2rem;
+        padding-left: 1.25rem;
+      }
+      .sidebar-submenu .nav-link {
+        min-height: 38px;
+        padding: .48rem .35rem;
+        gap: .55rem !important;
+        font-size: .875rem;
+      }
+      .sidebar-submenu .nav-link::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        flex: 0 0 6px;
+        border: 1px solid currentColor;
+        border-radius: 50%;
+        opacity: .6;
+      }
+      .sidebar-submenu .nav-link svg {
+        width: 15px;
+        height: 15px;
+        margin-left: auto;
+        flex: 0 0 15px;
+      }
+      .sidebar .offcanvas-header { min-height: 72px; }
+      .sidebar .offcanvas-body { overflow-y: auto; }
+      .sidebar-menu { min-height: 0; flex: 1 1 auto; overflow-y: auto; }
+      .profile-card { background: transparent; border: 0; border-radius: 0; }
+      .sidebar-profile { border-top: 1px solid var(--line); }
+      .sidebar-profile .profile-toggle { color: #34353a; }
+      .sidebar-profile .profile-copy { color: #282930; }
+      .sidebar-profile .profile-role { color: #8b8e97; }
+      .sidebar-profile .avatar { width: 40px; height: 40px; }
+      .sidebar .badge-count {
+        min-width: 32px;
+        color: #fff;
+        font-size: .8rem;
+      }
+      .sidebar .badge-count-red { background-color: #e00000; }
+      .sidebar .badge-count-green { background-color: #1b9b57; }
+      .sidebar .nav-link svg {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+      }
+      .topbar {
+        min-height: 58px;
+        height: 58px;
+      }
+      .header-search {
+        width: 266px;
+        height: 43px;
+        background-color: #f8f8fb;
+        border-color: #dfe0f3 !important;
+      }
+      .header-search:focus-within {
+        background-color: #fff;
+        border-color: var(--purple) !important;
+        box-shadow: 0 0 0 .2rem #7657f633;
+      }
+      .header-search .form-control { background-color: transparent; }
+      .header-search .form-control::placeholder { color: #85858f; }
+      .header-action {
+        color: #656872;
+        width: 32px;
+        height: 32px;
+      }
+      .header-action:hover,
+      .header-action:focus-visible {
+        color: #292b32;
+        background-color: #f1f2f5;
+      }
+      .header-action .badge {
+        top: 0;
+        right: -2px;
+        font-size: .65rem;
+        line-height: 1;
+      }
+      .surface {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 1rem;
+      }
+      .surface h2, .surface h3, .surface h4, .surface h5 { color: var(--text); }
+      .muted { color: var(--muted); }
+      .metric-card { min-height: 146px; }
+      .metric-icon {
+        width: 52px;
+        height: 52px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: #fff;
+      }
+      .icon-purple { background: var(--purple); }
+      .icon-orange { background: var(--orange); }
+      .icon-green { background: var(--green); }
+      .icon-blue { background: var(--blue); }
+      .trend { font-size: .75rem; }
+      .chart-wrap { height: 250px; }
+      .chart-wrap svg { width: 100%; height: 100%; overflow: visible; }
+      .grid-line { stroke: #e7e9ed; stroke-dasharray: 4 5; }
+      .chart-label { fill: #858a94; font-size: 11px; }
+      .chart-line-purple { fill: none; stroke: #8d71ff; stroke-width: 3; }
+      .chart-line-blue { fill: none; stroke: #18a9e3; stroke-width: 3; }
+      .chart-line-orange { fill: none; stroke: #ff8a4c; stroke-width: 2; }
+      .chart-area { fill: url(#areaFill); }
+      .legend-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+      .performance-ring {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: conic-gradient(var(--ring-color) calc(var(--value) * 1%), #e9ebef 0);
+        position: relative;
+      }
+      .performance-ring::before {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border-radius: 50%;
+        background: var(--surface);
+      }
+      .performance-ring span { position: relative; font-weight: 700; }
+      .avatar {
+        width: 38px;
+        height: 38px;
+        object-fit: cover;
+        border-radius: 50%;
+        background: #e9ebef;
+      }
+      .avatar-sm { width: 32px; height: 32px; }
+      .table {
+        --bs-table-bg: transparent;
+        --bs-table-color: #4f525a;
+        --bs-table-border-color: #eceef2;
+        --bs-table-hover-bg: #f8f9fb;
+        --bs-table-hover-color: #292b32;
+        margin-bottom: 0;
+        white-space: nowrap;
+      }
+      .table thead th {
+        color: #777b84;
+        background: #f7f8fa;
+        font-size: .75rem;
+        font-weight: 600;
+        letter-spacing: .03em;
+        padding: .9rem 1rem;
+      }
+      .table td { padding: .82rem 1rem; vertical-align: middle; }
+      .table-responsive { border-radius: .75rem; }
+      .badge-soft-success { color: #188452; background: #e4f5ec; }
+      .badge-soft-warning { color: #a96808; background: #fff2d9; }
+      .badge-soft-danger { color: #c83e49; background: #fde9eb; }
+      .badge-soft-info { color: #14799f; background: #e2f4fb; }
+      .btn-quiet { color: #686b74; border-color: #e2e4e9; }
+      .btn-quiet:hover { color: #292b32; background: #f1f2f5; border-color: #d7d9df; }
+      .event-mark {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: .8rem;
+        color: #7657f6;
+        background: #f0edff;
+      }
+      .meeting-row + .meeting-row, .event-row + .event-row {
+        border-top: 1px solid var(--line);
+      }
+      .meeting-row, .event-row { padding: .85rem 0; }
+      .progress { height: 7px; background: #e9ebef; }
+      .progress-bar { border-radius: 1rem; }
+      .dropdown-menu {
+        --bs-dropdown-bg: #fff;
+        --bs-dropdown-color: #292b32;
+        --bs-dropdown-link-color: #292b32;
+        --bs-dropdown-link-hover-bg: #f4f5f7;
+        --bs-dropdown-border-color: #e5e7eb;
+      }
+      .modal-content { background: #fff; border-color: #e5e7eb; }
+      .modal-header, .modal-footer { border-color: #e5e7eb; }
+      .form-control, .form-select {
+        background-color: #fff;
+        border-color: #dfe2e7;
+        color: var(--text);
+      }
+      .form-control:focus, .form-select:focus {
+        background-color: #fff;
+        border-color: var(--purple);
+        color: var(--text);
+        box-shadow: 0 0 0 .2rem #7657f633;
+      }
+      /* Bootstrap 5.3.3 ships these component values as literals. Rebind them to the theme. */
+      .btn-primary {
+        --bs-btn-bg: var(--bs-primary);
+        --bs-btn-border-color: var(--bs-primary);
+        --bs-btn-hover-bg: #6342ed;
+        --bs-btn-hover-border-color: #6342ed;
+        --bs-btn-active-bg: #5534d7;
+        --bs-btn-active-border-color: #5534d7;
+      }
+      .btn-outline-primary {
+        --bs-btn-color: var(--bs-primary);
+        --bs-btn-border-color: var(--bs-primary);
+        --bs-btn-hover-color: #fff;
+        --bs-btn-hover-bg: var(--bs-primary);
+        --bs-btn-hover-border-color: var(--bs-primary);
+        --bs-btn-active-color: #fff;
+        --bs-btn-active-bg: #5534d7;
+        --bs-btn-active-border-color: #5534d7;
+      }
+      .text-primary { color: rgba(var(--bs-primary-rgb), var(--bs-text-opacity, 1)) !important; }
+      .bg-primary { background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity, 1)) !important; }
+      .border-primary { border-color: rgba(var(--bs-primary-rgb), var(--bs-border-opacity, 1)) !important; }
+      .page-link.text-light { color: #525660 !important; }
+      @media (max-width: 991.98px) {
+        .sidebar.offcanvas-start { width: min(268px, 85vw); min-height: 100%; }
+        .topbar { min-height: 58px; }
+      }
+      @media (min-width: 992px) and (hover: hover) {
+        .sidebar.sidebar-labels-hidden {
+          width: 80px;
+          min-width: 80px;
+          flex: 0 0 80px;
+          overflow: hidden;
+        }
+        .sidebar.sidebar-collapsed {
+          width: 80px;
+          min-width: 80px;
+          flex: 0 0 80px;
+          overflow: hidden;
+          transition: none;
+        }
+        .sidebar.sidebar-collapsed .offcanvas-header {
+          justify-content: center;
+          padding-inline: .5rem !important;
+        }
+        .sidebar.sidebar-labels-hidden .brand-name,
+        .sidebar.sidebar-labels-hidden .sidebar-label,
+        .sidebar.sidebar-labels-hidden .sidebar-badge,
+        .sidebar.sidebar-labels-hidden .profile-copy,
+        .sidebar.sidebar-labels-hidden .sidebar-footer {
+          display: none !important;
+        }
+        .sidebar.sidebar-labels-hidden .section-label {
+          display: block !important;
+          visibility: hidden;
+          white-space: nowrap;
+        }
+        .sidebar.sidebar-collapsed .offcanvas-body { padding: 1rem .5rem !important; }
+        .sidebar.sidebar-collapsed .nav-link {
+          justify-content: center;
+          gap: 0 !important;
+          padding-inline: .5rem;
+        }
+        .sidebar.sidebar-collapsed .sidebar-profile .profile-card { padding-inline: 0 !important; }
+        .sidebar.sidebar-collapsed .sidebar-profile .profile-card > .d-flex { justify-content: center; }
+        .sidebar.sidebar-labels-hidden .profile-options,
+        .sidebar.sidebar-labels-hidden .sidebar-chevron,
+        .sidebar.sidebar-labels-hidden .sidebar-submenu { display: none; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .sidebar, .sidebar * { transition: none !important; }
+      }
+      @media (max-width: 575.98px) {
+        main { padding: 1.15rem !important; }
+        .topbar { padding-inline: 1rem !important; }
+        .metric-card { min-height: 126px; }
+        .chart-wrap { height: 220px; }
+      }
+    </style>
+  </head>
+  <body data-bs-theme="light">
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none" aria-hidden="true">
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></symbol>
+      <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M8 15l4-4 3 3 6-7M17 7h4v4"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 2Z" transform="translate(-1 -1) scale(1.08)"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
+      <symbol id="i-flag-us" viewBox="0 0 24 16"><path fill="#fff" d="M0 0h24v16H0z"/><path fill="#d81f35" d="M0 0h24v2H0zm0 4h24v2H0zm0 4h24v2H0zm0 4h24v2H0z"/><path fill="#2b4f9b" d="M0 0h11v9H0z"/><path fill="#fff" d="m1.2 1.1.35 1.05h1.1l-.9.65.35 1.05-.9-.65-.9.65.35-1.05-.9-.65h1.1zm3.2 0 .35 1.05h1.1l-.9.65.35 1.05-.9-.65-.9.65.35-1.05-.9-.65h1.1zm3.2 0 .35 1.05h1.1l-.9.65.35 1.05-.9-.65-.9.65.35-1.05-.9-.65h1.1zM2.8 4.7l.35 1.05h1.1l-.9.65.35 1.05-.9-.65-.9.65.35-1.05-.9-.65h1.1zm3.2 0 .35 1.05h1.1l-.9.65.35 1.05-.9-.65-.9.65.35-1.05-.9-.65h1.1zm3.2 0 .35 1.05h1.1l-.9.65.35 1.05-.9-.65-.9.65.35-1.05-.9-.65h1.1z"/></symbol>
+      <symbol id="i-flag-fr" viewBox="0 0 24 16"><path fill="#243f9b" d="M0 0h8v16H0z"/><path fill="#fff" d="M8 0h8v16H8z"/><path fill="#ed2939" d="M16 0h8v16h-8z"/></symbol>
+      <symbol id="i-flag-de" viewBox="0 0 24 16"><path fill="#222" d="M0 0h24v5.34H0z"/><path fill="#d00" d="M0 5.33h24v5.34H0z"/><path fill="#ffce00" d="M0 10.66h24V16H0z"/></symbol>
+      <symbol id="i-flag-sa" viewBox="0 0 24 16"><path fill="#087a45" d="M0 0h24v16H0z"/><path fill="#fff" d="M5 10h14v1H5zM7 6h1v3H7zm2-1h1v4H9zm2 1h1v3h-1zm2-1h1v4h-1z"/></symbol>
+      <symbol id="i-gift" viewBox="0 0 24 24"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 7v14M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5V7Zm0 0h4.5a2.5 2.5 0 1 0-2.5-2.5V7Z"/></symbol>
+      <symbol id="i-dollar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8.5c0-1.4-1.6-2.5-4-2.5s-4 1.1-4 2.5 1.3 2.2 4 3 4 1.6 4 3-1.6 2.5-4 2.5-4-1.1-4-2.5M12 4v16"/></symbol>
+      <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"/></symbol>
+      <symbol id="i-brand" viewBox="0 0 24 24"><path d="M19 5.5A8 8 0 1 0 19 18.5M18 5l2 1-1 2"/></symbol>
+      <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/><path d="M8 12h.01M12 12h.01M16 12h.01"/></symbol>
+      <symbol id="i-pen" viewBox="0 0 24 24"><path d="m12 19 7-7 3 3-7 7-4 1zM18 13l-7-7a2.1 2.1 0 0 0-3 0l-6 6a2.1 2.1 0 0 0 0 3l7 7M2 22h20"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0M19 8a3 3 0 0 1-2 2.8M18 15a6 6 0 0 1 3 5"/></symbol>
+      <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M7 5V3h10v2M16 15h.01"/></symbol>
+      <symbol id="i-shopping" viewBox="0 0 24 24"><path d="M6 7h12l2 14H4L6 7Z"/><path d="M9 10V6a3 3 0 0 1 6 0v4M9 14v3M12 14v3M15 14v3"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 7v14M3 18V5a2 2 0 0 1 2-2h3a4 4 0 0 1 4 4 4 4 0 0 1 4-4h3a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-4a3 3 0 0 0-3 2 3 3 0 0 0-3-2H5a2 2 0 0 1-2-2Z"/></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/></symbol>
+      <symbol id="i-layout" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></symbol>
+      <symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M19 13h2v8h-8v-2a2 2 0 1 0-4 0v2H3v-8h2a2 2 0 1 0 0-4H3V3h8v2a2 2 0 1 0 4 0V3h6v6h-2a2 2 0 1 0 0 4Z"/></symbol>
+      <symbol id="i-map" viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z"/><path d="M9 3v15M15 6v15"/></symbol>
+      <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10M15 10v10"/></symbol>
+      <symbol id="i-chevrons" viewBox="0 0 24 24"><path d="m7 10 5-5 5 5M7 14l5 5 5-5"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="m7 14 5-5 5 5M12 9v12"/></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h8"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="m16 4 4 4M4 20l4-.8L19 8a2.8 2.8 0 0 0-4-4L4 15z"/></symbol>
+    </svg>
+
+    <div class="app-shell d-flex">
+      <aside class="sidebar offcanvas offcanvas-start" tabindex="-1" id="appSidebar" aria-labelledby="sidebarTitle">
+        <div class="offcanvas-header border-bottom px-3 py-3">
+          <a class="navbar-brand fw-bold fs-4 mb-0 d-flex align-items-center gap-2" href="#dashboard" aria-label="Conca home">
+            <span class="brand-mark"><svg width="23" height="23" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><use href="#i-brand"/></svg></span>
+            <span class="brand-name">Conca</span>
+          </a>
+          <button type="button" class="btn-close d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#appSidebar" aria-label="Close menu"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column p-3">
+          <h1 class="visually-hidden" id="sidebarTitle">Main navigation</h1>
+          <div class="sidebar-menu">
+          <nav class="nav nav-pills flex-column gap-1" aria-label="Dashboard navigation">
+            <a class="nav-link d-flex align-items-center gap-3" href="#dashboard" aria-label="Dashboard">
+              <svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-grid"/></svg>
+              <span class="sidebar-label">Dashboard</span>
+              <span class="badge rounded-pill badge-count badge-count-red ms-auto sidebar-badge">5</span>
+              <svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg>
+            </a>
+          </nav>
+
+          <div class="section-label px-2 pt-3 pb-1">APPS</div>
+          <nav class="nav nav-pills flex-column gap-1" aria-label="Apps">
+            <a class="nav-link d-flex align-items-center gap-3" href="#meetings" aria-label="Chat">
+              <svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chat"/></svg><span class="sidebar-label">Chat</span>
+            </a>
+            <a class="nav-link d-flex align-items-center gap-3" href="#employees" aria-label="POS">
+              <svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-pen"/></svg><span class="sidebar-label">POS</span>
+            </a>
+          </nav>
+
+          <div class="section-label px-2 pt-3 pb-1">PAGES</div>
+          <nav class="nav nav-pills flex-column gap-1" aria-label="Pages">
+            <div class="sidebar-group">
+              <button class="nav-link sidebar-menu-toggle d-flex align-items-center gap-3" type="button" data-bs-toggle="collapse" data-bs-target="#authSubmenu" aria-expanded="true" aria-controls="authSubmenu" aria-label="Toggle Authentications menu">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-lock"/></svg><span class="sidebar-label">Authentications</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg>
+              </button>
+              <div class="collapse show sidebar-submenu" id="authSubmenu">
+                <nav class="nav flex-column" aria-label="Authentication pages">
+                  <a class="nav-link d-flex align-items-center" href="#login"><span>Login</span><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+                  <a class="nav-link d-flex align-items-center" href="#register"><span>Register</span><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+                  <a class="nav-link d-flex align-items-center" href="#verify-email"><span>Verify Email</span><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+                  <a class="nav-link d-flex align-items-center" href="#reset-password"><span>Reset Password</span><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+                  <a class="nav-link d-flex align-items-center" href="#forgot-password"><span>Forgot Password</span><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+                  <a class="nav-link d-flex align-items-center" href="#two-step"><span>Two Step</span><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+                  <a class="nav-link d-flex align-items-center" href="#error-pages"><span>Error Pages</span><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+                </nav>
+              </div>
+            </div>
+            <a class="nav-link d-flex align-items-center gap-3" href="#employees" aria-label="User Profile"><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-user"/></svg><span class="sidebar-label">User Profile</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+            <a class="nav-link d-flex align-items-center gap-3" href="#settings" aria-label="Account"><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-wallet"/></svg><span class="sidebar-label">Account</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+            <a class="nav-link d-flex align-items-center gap-3" href="#employees" aria-label="Users"><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-users"/></svg><span class="sidebar-label">Users</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+            <a class="nav-link d-flex align-items-center gap-3" href="#employees" aria-label="Ecommerce"><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-shopping"/></svg><span class="sidebar-label">Ecommerce</span><span class="badge rounded-pill badge-count badge-count-green ms-auto sidebar-badge">2</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+            <a class="nav-link d-flex align-items-center gap-3" href="#events" aria-label="LMS"><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-book"/></svg><span class="sidebar-label">LMS</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+          </nav>
+
+          <div class="section-label px-2 pt-3 pb-1">COMPONENTS</div>
+          <nav class="nav nav-pills flex-column gap-1" aria-label="Components">
+            <a class="nav-link d-flex align-items-center gap-3" href="#team-workload" aria-label="User Interface"><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-layout"/></svg><span class="sidebar-label">User Interface</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+            <a class="nav-link d-flex align-items-center gap-3" href="#team-workload" aria-label="Extended UI"><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-puzzle"/></svg><span class="sidebar-label">Extended UI</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+          </nav>
+
+          <div class="section-label px-2 pt-3 pb-1">FORMS</div>
+          <nav class="nav nav-pills flex-column gap-1" aria-label="Forms">
+            <a class="nav-link d-flex align-items-center gap-3" href="#leave-requests" aria-label="Form Elements"><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-layout"/></svg><span class="sidebar-label">Form Elements</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+          </nav>
+
+          <div class="section-label px-2 pt-3 pb-1">CHARTS</div>
+          <nav class="nav nav-pills flex-column gap-1" aria-label="Charts">
+            <a class="nav-link d-flex align-items-center gap-3" href="#team-workload" aria-label="Apex Chart"><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chart"/></svg><span class="sidebar-label">Apex Chart</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+          </nav>
+
+          <div class="section-label px-2 pt-3 pb-1">MAPS &amp; TABLES</div>
+          <nav class="nav nav-pills flex-column gap-1" aria-label="Maps and tables">
+            <a class="nav-link d-flex align-items-center gap-3" href="#events" aria-label="Maps"><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-map"/></svg><span class="sidebar-label">Maps</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+            <a class="nav-link d-flex align-items-center gap-3" href="#employees" aria-label="Tables"><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-table"/></svg><span class="sidebar-label">Tables</span><svg class="sidebar-chevron" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+          </nav>
+          </div>
+
+          <div class="sidebar-profile pt-2">
+            <div class="profile-card px-2 py-2">
+              <div class="d-flex align-items-center gap-2">
+                <img class="avatar flex-shrink-0" src="https://i.pravatar.cc/80?img=12" alt="Joel Becker">
+                <div class="min-w-0 profile-copy">
+                  <div class="fw-semibold text-truncate">Joel Becker</div>
+                  <div class="small profile-role">Admin</div>
+                </div>
+                <button class="btn btn-sm border-0 ms-auto profile-options profile-toggle" aria-label="Profile options">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevrons"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="flex-grow-1 min-vh-100 min-w-0">
+        <header class="topbar navbar bg-white border-bottom d-flex align-items-center justify-content-between gap-3 px-3 px-lg-4 sticky-top">
+          <div class="d-flex align-items-center gap-2 flex-grow-1">
+            <button class="btn header-action d-inline-flex align-items-center justify-content-center border-0 rounded-1 p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar" aria-controls="appSidebar" aria-label="Open navigation">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-menu"/></svg>
+            </button>
+            <div class="input-group header-search rounded-2 overflow-hidden border ms-1">
+              <span class="input-group-text bg-transparent border-0 ps-3 pe-2 text-dark"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-search"/></svg></span>
+              <input class="form-control border-0 ps-0 pe-2" type="search" placeholder="Enter Keywords..." aria-label="Search dashboard" id="globalSearch">
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-2 gap-sm-3">
+            <div class="dropdown position-static">
+              <button class="btn header-action d-inline-flex align-items-center justify-content-center border-0 rounded-circle p-0 position-relative" type="button" id="notificationsDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Notifications">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><use href="#i-bell"/></svg>
+                <span class="position-absolute badge rounded-pill bg-success" id="notificationCount">5</span>
+              </button>
+              <div class="dropdown-menu dropdown-menu-end col-12 col-lg-3 p-0 shadow border rounded-3" aria-labelledby="notificationsDropdown">
+                <div class="d-flex align-items-center justify-content-between border-bottom px-3 py-3">
+                  <h2 class="h6 mb-0">Notifications</h2>
+                  <button class="btn btn-link btn-sm text-decoration-none p-0" type="button" id="clearNotifications">Clear All</button>
+                </div>
+                <ul class="list-group list-group-flush" id="notificationList">
+                  <li class="list-group-item border-0 border-bottom px-3 py-2" data-notification>
+                    <div class="d-flex align-items-center gap-3">
+                      <img src="https://i.pravatar.cc/80?img=12" class="avatar flex-shrink-0" alt="">
+                      <div class="flex-grow-1"><div class="small text-dark">New user registered</div><div class="small text-secondary">Just now</div></div>
+                      <button class="btn-close notification-dismiss" type="button" aria-label="Dismiss new user notification"></button>
+                    </div>
+                  </li>
+                  <li class="list-group-item border-0 border-bottom px-3 py-2" data-notification>
+                    <div class="d-flex align-items-center gap-3">
+                      <span class="rounded-circle bg-warning-subtle text-warning d-inline-flex align-items-center justify-content-center p-3 flex-shrink-0"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><use href="#i-gift"/></svg></span>
+                      <div class="flex-grow-1"><div class="small text-dark">A new order has been placed</div><div class="small text-secondary">5 min ago</div></div>
+                      <button class="btn-close notification-dismiss" type="button" aria-label="Dismiss new order notification"></button>
+                    </div>
+                  </li>
+                  <li class="list-group-item border-0 border-bottom px-3 py-2" data-notification>
+                    <div class="d-flex align-items-center gap-3">
+                      <span class="rounded-circle bg-success-subtle text-success d-inline-flex align-items-center justify-content-center p-3 flex-shrink-0"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><use href="#i-dollar"/></svg></span>
+                      <div class="flex-grow-1"><div class="small text-dark">Payout successful</div><div class="small text-secondary">2 hrs ago</div></div>
+                      <button class="btn-close notification-dismiss" type="button" aria-label="Dismiss payout notification"></button>
+                    </div>
+                  </li>
+                  <li class="list-group-item border-0 border-bottom px-3 py-2" data-notification>
+                    <div class="d-flex align-items-center gap-3">
+                      <span class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center p-3 flex-shrink-0"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><use href="#i-chat"/></svg></span>
+                      <div class="flex-grow-1"><div class="small text-dark">New comment on your post</div><div class="small text-secondary">4 hrs ago</div></div>
+                      <button class="btn-close notification-dismiss" type="button" aria-label="Dismiss comment notification"></button>
+                    </div>
+                  </li>
+                  <li class="list-group-item border-0 px-3 py-2" data-notification>
+                    <div class="d-flex align-items-center gap-3">
+                      <img src="https://i.pravatar.cc/80?img=47" class="avatar flex-shrink-0" alt="">
+                      <div class="flex-grow-1"><div class="small text-dark">User has verified email</div><div class="small text-secondary">1 day ago</div></div>
+                      <button class="btn-close notification-dismiss" type="button" aria-label="Dismiss verification notification"></button>
+                    </div>
+                  </li>
+                </ul>
+                <a class="dropdown-item text-center text-primary border-top py-3" href="#notifications">View All Notifications</a>
+              </div>
+            </div>
+
+            <div class="dropdown">
+              <button class="btn header-action d-inline-flex align-items-center justify-content-center border-0 rounded-circle p-0" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Language">
+                <svg width="20" height="14" aria-hidden="true"><use id="selectedLanguageFlag" href="#i-flag-us"/></svg>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-lg-end shadow border rounded-3 p-2" aria-labelledby="languageDropdown">
+                <li><button class="dropdown-item rounded-2 active language-option" type="button" data-language="English" data-flag="#i-flag-us">English</button></li>
+                <li><button class="dropdown-item rounded-2 language-option" type="button" data-language="French" data-flag="#i-flag-fr">French</button></li>
+                <li><button class="dropdown-item rounded-2 language-option" type="button" data-language="Arabic" data-flag="#i-flag-sa">Arabic</button></li>
+                <li><button class="dropdown-item rounded-2 language-option" type="button" data-language="German" data-flag="#i-flag-de">German</button></li>
+              </ul>
+            </div>
+
+            <button class="btn header-action d-inline-flex align-items-center justify-content-center border-0 rounded-1 p-0" type="button" aria-label="Display options">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><use href="#i-sun"/></svg>
+            </button>
+
+            <div class="dropdown position-static">
+              <button class="btn p-1 border border-2 border-primary-subtle rounded-circle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Open profile">
+                <img src="https://i.pravatar.cc/80?img=12" class="avatar rounded-circle" alt="Joel Becker">
+              </button>
+              <div class="dropdown-menu dropdown-menu-end col-6 col-lg-2 shadow border rounded-3 p-0" aria-labelledby="profileDropdown">
+                <div class="d-flex align-items-center gap-3 border-bottom px-3 py-3">
+                  <img src="https://i.pravatar.cc/80?img=12" class="avatar rounded-circle flex-shrink-0" alt="Joel Becker">
+                  <div><div class="fw-semibold text-dark">Joel Becker</div><div class="small text-secondary">Admin</div></div>
+                </div>
+                <ul class="list-unstyled mb-0 py-2">
+                  <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#meetings"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><use href="#i-chat"/></svg>Messages</a></li>
+                  <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#employees"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><use href="#i-user"/></svg>My Profile</a></li>
+                  <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#settings"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><use href="#i-wallet"/></svg>Billings</a></li>
+                  <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#settings"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><use href="#i-settings"/></svg>Settings</a></li>
+                </ul>
+                <div class="border-top py-2">
+                  <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#logout"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><use href="#i-logout"/></svg>Logout</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="px-4 px-xl-5 py-4 py-xl-5" id="dashboard">
+          <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+            <div>
+              <div class="muted small mb-2">Dashboard <span class="mx-1">/</span> HRM</div>
+              <h1 class="h2 fw-bold mb-1">HRM Dashboard</h1>
+              <p class="muted mb-0">Welcome back, Joel. Here's what's happening with your team.</p>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-quiet d-flex align-items-center gap-2" type="button" id="exportButton">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-download"/></svg>
+                <span class="d-none d-sm-inline">Export</span>
+              </button>
+              <button class="btn btn-primary d-flex align-items-center gap-2" type="button" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-plus"/></svg>
+                Add employee
+              </button>
+            </div>
+          </div>
+
+          <section aria-label="HR metrics" class="row g-3 g-xl-4 mb-4">
+            <div class="col-12 col-sm-6 col-xxl-3"><article class="surface metric-card p-4 d-flex align-items-center justify-content-between gap-3">
+              <div><div class="muted mb-2">Total Employees</div><div class="h2 fw-bold mb-2">1,250</div><div class="trend text-success"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-arrow-up"/></svg> 12.5% <span class="muted">vs last month</span></div></div>
+              <div class="metric-icon icon-purple flex-shrink-0"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-users"/></svg></div>
+            </article></div>
+            <div class="col-12 col-sm-6 col-xxl-3"><article class="surface metric-card p-4 d-flex align-items-center justify-content-between gap-3">
+              <div><div class="muted mb-2">Total Job Applications</div><div class="h2 fw-bold mb-2">210</div><div class="trend text-success"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-arrow-up"/></svg> 8.2% <span class="muted">vs last month</span></div></div>
+              <div class="metric-icon icon-orange flex-shrink-0"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-briefcase"/></svg></div>
+            </article></div>
+            <div class="col-12 col-sm-6 col-xxl-3"><article class="surface metric-card p-4 d-flex align-items-center justify-content-between gap-3">
+              <div><div class="muted mb-2">New Hires</div><div class="h2 fw-bold mb-2">25</div><div class="trend text-success"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-arrow-up"/></svg> 4.3% <span class="muted">vs last month</span></div></div>
+              <div class="metric-icon icon-green flex-shrink-0"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-plus"/></svg></div>
+            </article></div>
+            <div class="col-12 col-sm-6 col-xxl-3"><article class="surface metric-card p-4 d-flex align-items-center justify-content-between gap-3">
+              <div><div class="muted mb-2">Employee Turnover</div><div class="h2 fw-bold mb-2">5%</div><div class="trend text-danger">−1.2% <span class="muted">vs last month</span></div></div>
+              <div class="metric-icon icon-blue flex-shrink-0"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-chart"/></svg></div>
+            </article></div>
+          </section>
+
+          <section class="row g-3 g-xl-4 mb-4" aria-label="Employee performance and overview">
+            <div class="col-12 col-xxl-4">
+              <article class="surface p-4 h-100">
+                <div class="mb-4"><h2 class="h5 fw-semibold mb-1">Employee Performance</h2><p class="muted small mb-0">Performance overview by teams</p></div>
+                <div class="row g-3">
+                  <div class="col-6"><div class="d-flex align-items-center gap-3">
+                    <div class="performance-ring flex-shrink-0" style="--value:40;--ring-color:#7657f6"><span>40%</span></div>
+                    <div><div class="fw-medium">Design Team</div><div class="small muted">Excellent</div></div>
+                  </div></div>
+                  <div class="col-6"><div class="d-flex align-items-center gap-3">
+                    <div class="performance-ring flex-shrink-0" style="--value:35;--ring-color:#ff6b22"><span>35%</span></div>
+                    <div><div class="fw-medium">Development</div><div class="small muted">On target</div></div>
+                  </div></div>
+                  <div class="col-6"><div class="d-flex align-items-center gap-3">
+                    <div class="performance-ring flex-shrink-0" style="--value:53;--ring-color:#20a566"><span>53%</span></div>
+                    <div><div class="fw-medium">Marketing</div><div class="small muted">Excellent</div></div>
+                  </div></div>
+                  <div class="col-6"><div class="d-flex align-items-center gap-3">
+                    <div class="performance-ring flex-shrink-0" style="--value:40;--ring-color:#13a5df"><span>40%</span></div>
+                    <div><div class="fw-medium">HR Team</div><div class="small muted">On target</div></div>
+                  </div></div>
+                </div>
+                <div class="border-top mt-4 pt-3 d-flex justify-content-between small"><span class="muted">Average performance</span><span class="fw-semibold text-success">42% <span class="muted fw-normal">this month</span></span></div>
+              </article>
+            </div>
+            <div class="col-12 col-xxl-8">
+              <article class="surface p-4 h-100">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-2">
+                  <div><h2 class="h5 fw-semibold mb-1">Employee Overview</h2><p class="muted small mb-0">Hiring and attrition trends over time</p></div>
+                  <div class="dropdown">
+                    <button class="btn btn-quiet btn-sm dropdown-toggle" data-bs-toggle="dropdown" type="button">This year</button>
+                    <ul class="dropdown-menu dropdown-menu-end"><li><button class="dropdown-item period-option" type="button">This year</button></li><li><button class="dropdown-item period-option" type="button">Last 6 months</button></li><li><button class="dropdown-item period-option" type="button">Last 30 days</button></li></ul>
+                  </div>
+                </div>
+                <div class="d-flex flex-wrap gap-3 small muted mb-2">
+                  <span><i class="legend-dot me-2" style="background:#8d71ff"></i>New Employees</span>
+                  <span><i class="legend-dot me-2" style="background:#18a9e3"></i>Terminated Employees</span>
+                  <span><i class="legend-dot me-2" style="background:#ff8a4c"></i>Net Growth</span>
+                </div>
+                <div class="chart-wrap" role="img" aria-label="Line chart showing employee growth from January to December">
+                  <svg viewBox="0 0 720 250" preserveAspectRatio="none">
+                    <defs><linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#7657f6" stop-opacity=".3"/><stop offset="1" stop-color="#7657f6" stop-opacity="0"/></linearGradient></defs>
+                    <line class="grid-line" x1="48" y1="25" x2="710" y2="25"/><line class="grid-line" x1="48" y1="65" x2="710" y2="65"/><line class="grid-line" x1="48" y1="105" x2="710" y2="105"/><line class="grid-line" x1="48" y1="145" x2="710" y2="145"/><line class="grid-line" x1="48" y1="185" x2="710" y2="185"/>
+                    <text class="chart-label" x="8" y="29">12</text><text class="chart-label" x="8" y="69">9</text><text class="chart-label" x="8" y="109">6</text><text class="chart-label" x="8" y="149">3</text><text class="chart-label" x="8" y="189">0</text>
+                    <path class="chart-area" d="M55 150 L112 125 L169 137 L226 94 L283 110 L340 71 L397 88 L454 54 L511 72 L568 43 L625 57 L690 31 L690 185 L55 185 Z"/>
+                    <path class="chart-line-purple" d="M55 150 L112 125 L169 137 L226 94 L283 110 L340 71 L397 88 L454 54 L511 72 L568 43 L625 57 L690 31"/>
+                    <path class="chart-line-blue" d="M55 169 L112 160 L169 166 L226 151 L283 157 L340 144 L397 153 L454 136 L511 147 L568 132 L625 139 L690 125"/>
+                    <path class="chart-line-orange" d="M55 176 L112 168 L169 173 L226 158 L283 164 L340 148 L397 160 L454 142 L511 154 L568 137 L625 146 L690 130"/>
+                    <g class="chart-label" text-anchor="middle"><text x="55" y="215">Jan</text><text x="112" y="215">Feb</text><text x="169" y="215">Mar</text><text x="226" y="215">Apr</text><text x="283" y="215">May</text><text x="340" y="215">Jun</text><text x="397" y="215">Jul</text><text x="454" y="215">Aug</text><text x="511" y="215">Sep</text><text x="568" y="215">Oct</text><text x="625" y="215">Nov</text><text x="690" y="215">Dec</text></g>
+                  </svg>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="row g-3 g-xl-4 mb-4" aria-label="Leave requests and team workload">
+            <div class="col-12 col-xxl-7" id="leave-requests">
+              <article class="surface p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div><h2 class="h5 fw-semibold mb-1">Leave Requests</h2><p class="muted small mb-0">Review recent time-off requests</p></div><a href="#employees" class="link-primary text-decoration-none small fw-medium">View all <span aria-hidden="true">→</span></a></div>
+                <div class="table-responsive">
+                  <table class="table table-hover align-middle">
+                    <thead><tr><th>Employee</th><th>Type</th><th>Days</th><th>Status</th><th class="text-end">Action</th></tr></thead>
+                    <tbody id="leaveTable">
+                      <tr><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=47" alt=""><span class="fw-medium">Skly Herd</span></div></td><td>Sick Leave</td><td>3 days</td><td><span class="badge rounded-pill badge-soft-success">Approved</span></td><td class="text-end"><button class="btn btn-sm btn-quiet leave-action" aria-label="More options for Skly Herd"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                      <tr><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=44" alt=""><span class="fw-medium">Skly Herd</span></div></td><td>Birthday Leave</td><td>1 day</td><td><span class="badge rounded-pill badge-soft-warning">Pending</span></td><td class="text-end"><button class="btn btn-sm btn-quiet leave-action" aria-label="Review request for Skly Herd"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                      <tr><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=12" alt=""><span class="fw-medium">John Doe</span></div></td><td>Maternity Leave</td><td>5 days</td><td><span class="badge rounded-pill badge-soft-danger">Rejected</span></td><td class="text-end"><button class="btn btn-sm btn-quiet leave-action" aria-label="More options for John Doe"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                      <tr><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=49" alt=""><span class="fw-medium">Jane Smith</span></div></td><td>Vacation Leave</td><td>10 days</td><td><span class="badge rounded-pill badge-soft-success">Approved</span></td><td class="text-end"><button class="btn btn-sm btn-quiet leave-action" aria-label="More options for Jane Smith"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                      <tr><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=13" alt=""><span class="fw-medium">Alex Turner</span></div></td><td>Personal Leave</td><td>2 days</td><td><span class="badge rounded-pill badge-soft-warning">Pending</span></td><td class="text-end"><button class="btn btn-sm btn-quiet leave-action" aria-label="Review request for Alex Turner"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </article>
+            </div>
+            <div class="col-12 col-xxl-5" id="team-workload">
+              <article class="surface p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3"><div><h2 class="h5 fw-semibold mb-1">Team Work Load</h2><p class="muted small mb-0">Work arrangement distribution</p></div><select class="form-select form-select-sm w-auto" aria-label="Workload period"><option>This Month</option><option>Last Month</option><option>Last 3 Months</option><option>Last 6 Months</option><option>Last Year</option></select></div>
+                <div class="d-flex flex-wrap gap-x-3 gap-3 small muted mb-3"><span><i class="legend-dot me-2" style="background:#7657f6"></i>On-site</span><span><i class="legend-dot me-2" style="background:#19a8e1"></i>Remote</span><span><i class="legend-dot me-2" style="background:#ff8a4c"></i>Freelance</span></div>
+                <div class="chart-wrap" style="height:208px" role="img" aria-label="Bar chart showing team work load">
+                  <svg viewBox="0 0 540 210" preserveAspectRatio="none">
+                    <line class="grid-line" x1="35" y1="25" x2="530" y2="25"/><line class="grid-line" x1="35" y1="65" x2="530" y2="65"/><line class="grid-line" x1="35" y1="105" x2="530" y2="105"/><line class="grid-line" x1="35" y1="145" x2="530" y2="145"/>
+                    <g fill="#7657f6"><rect x="58" y="77" width="14" height="68" rx="4"/><rect x="132" y="55" width="14" height="90" rx="4"/><rect x="206" y="65" width="14" height="80" rx="4"/><rect x="280" y="40" width="14" height="105" rx="4"/><rect x="354" y="70" width="14" height="75" rx="4"/><rect x="428" y="50" width="14" height="95" rx="4"/></g>
+                    <g fill="#19a8e1"><rect x="76" y="98" width="14" height="47" rx="4"/><rect x="150" y="83" width="14" height="62" rx="4"/><rect x="224" y="91" width="14" height="54" rx="4"/><rect x="298" y="67" width="14" height="78" rx="4"/><rect x="372" y="88" width="14" height="57" rx="4"/><rect x="446" y="74" width="14" height="71" rx="4"/></g>
+                    <g fill="#ff8a4c"><rect x="94" y="119" width="14" height="26" rx="4"/><rect x="168" y="112" width="14" height="33" rx="4"/><rect x="242" y="116" width="14" height="29" rx="4"/><rect x="316" y="105" width="14" height="40" rx="4"/><rect x="390" y="121" width="14" height="24" rx="4"/><rect x="464" y="110" width="14" height="35" rx="4"/></g>
+                    <g class="chart-label" text-anchor="middle"><text x="84" y="175">Design</text><text x="158" y="175">Dev</text><text x="232" y="175">Marketing</text><text x="306" y="175">Sales</text><text x="380" y="175">HR</text><text x="454" y="175">Support</text></g>
+                  </svg>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="row g-3 g-xl-4 mb-4" aria-label="Events and meetings">
+            <div class="col-12 col-xl-4" id="events">
+              <article class="surface p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h5 fw-semibold mb-0">Event List</h2><a href="#" class="link-primary text-decoration-none small">View all →</a></div>
+                <div class="event-row d-flex align-items-center gap-3"><div class="event-mark"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-calendar"/></svg></div><div class="flex-grow-1"><div class="fw-medium">Office Anniversary</div><div class="small muted">15 Nov, 2025</div></div><span class="badge badge-soft-info">Full day</span></div>
+                <div class="event-row d-flex align-items-center gap-3"><div class="event-mark"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-calendar"/></svg></div><div class="flex-grow-1"><div class="fw-medium">EID Celebration</div><div class="small muted">16 Nov, 2025</div></div><span class="badge badge-soft-info">Full day</span></div>
+                <div class="event-row d-flex align-items-center gap-3"><div class="event-mark"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-calendar"/></svg></div><div class="flex-grow-1"><div class="fw-medium">Independence Day</div><div class="small muted">17 Nov, 2025</div></div><span class="badge badge-soft-warning">Holiday</span></div>
+                <div class="event-row d-flex align-items-center gap-3"><div class="event-mark"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-calendar"/></svg></div><div class="flex-grow-1"><div class="fw-medium">Mid Year Party</div><div class="small muted">18 Nov, 2025</div></div><span class="badge badge-soft-info">Full day</span></div>
+                <div class="event-row d-flex align-items-center gap-3"><div class="event-mark"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#i-calendar"/></svg></div><div class="small flex-grow-1"><div class="fw-medium">Company Retreat</div><div class="small muted">19 Nov, 2025</div></div><span class="badge badge-soft-info">Full day</span></div>
+              </article>
+            </div>
+            <div class="col-12 col-xl-4" id="meetings">
+              <article class="surface p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2"><div><h2 class="h5 fw-semibold mb-1">Today's Meetings</h2><p class="muted small mb-0">Tuesday, November 18</p></div><button class="btn btn-sm btn-quiet" aria-label="Meeting options"><svg width="17" height="17" fill="currentColor"><use href="#i-more"/></svg></button></div>
+                <div class="meeting-row d-flex align-items-center gap-3"><img class="avatar" src="https://i.pravatar.cc/80?img=68" alt=""><div class="flex-grow-1"><div class="fw-medium">Project Kickoff</div><div class="small muted">10:30 AM · Conference room A</div></div><button class="btn btn-sm btn-outline-primary">Join</button></div>
+                <div class="meeting-row d-flex align-items-center gap-3"><img class="avatar" src="https://i.pravatar.cc/80?img=47" alt=""><div class="flex-grow-1"><div class="fw-medium">Design Review</div><div class="small muted">11:30 AM · Design team</div></div><button class="btn btn-sm btn-outline-primary">Join</button></div>
+                <div class="meeting-row d-flex align-items-center gap-3"><img class="avatar" src="https://i.pravatar.cc/80?img=12" alt=""><div class="flex-grow-1"><div class="fw-medium">Client Meeting</div><div class="small muted">01:00 PM · Video call</div></div><button class="btn btn-sm btn-outline-primary">Join</button></div>
+                <div class="meeting-row d-flex align-items-center gap-3"><img class="avatar" src="https://i.pravatar.cc/80?img=49" alt=""><div class="flex-grow-1"><div class="fw-medium">Discussion on Budget</div><div class="small muted">02:30 PM · Meeting room B</div></div><button class="btn btn-sm btn-outline-primary">Join</button></div>
+                <div class="meeting-row d-flex align-items-center gap-3"><img class="avatar" src="https://i.pravatar.cc/80?img=13" alt=""><div class="flex-grow-1"><div class="fw-medium">Quarterly Review</div><div class="small muted">04:00 PM · Conference room A</div></div><button class="btn btn-sm btn-outline-primary">Join</button></div>
+              </article>
+            </div>
+            <div class="col-12 col-xl-4">
+              <article class="surface p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h5 fw-semibold mb-0">Upcoming Events</h2><button class="btn btn-sm btn-quiet" aria-label="Upcoming event options"><svg width="17" height="17" fill="currentColor"><use href="#i-more"/></svg></button></div>
+                <div class="event-row"><div class="d-flex justify-content-between align-items-start gap-2"><div class="fw-medium">Company Annual Meet</div><span class="small text-primary flex-shrink-0">20 Nov, 2025</span></div><p class="muted small mt-2 mb-2">Annual gathering to celebrate achievements and plan for the year ahead.</p><a class="small text-decoration-none" href="#"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" class="me-1"><use href="#i-file"/></svg>Agenda.pdf</a></div>
+                <div class="event-row"><div class="d-flex justify-content-between align-items-start gap-2"><div class="fw-medium">New Product Launch</div><span class="small text-primary flex-shrink-0">25 Nov, 2025</span></div><p class="muted small mt-2 mb-0">Introducing our latest product with a grand launch event.</p></div>
+                <div class="event-row"><div class="d-flex justify-content-between align-items-start gap-2"><div class="fw-medium">DevOps Workshop</div><span class="small text-primary flex-shrink-0">28 Nov, 2025</span></div><p class="muted small mt-2 mb-0">A hands-on workshop for our engineering team.</p></div>
+              </article>
+            </div>
+          </section>
+
+          <section id="employees">
+            <article class="surface p-4">
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                <div><h2 class="h5 fw-semibold mb-1">Employee Lists</h2><p class="muted small mb-0">Manage and view your team members</p></div>
+                <div class="d-flex flex-wrap gap-2">
+                  <div class="input-group bg-light border rounded-3 overflow-hidden" style="width:min(100%,260px)">
+                    <span class="input-group-text bg-transparent border-0 text-secondary ps-3"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-search"/></svg></span>
+                    <input class="form-control bg-transparent border-0 ps-1" id="employeeSearch" type="search" placeholder="Search employees..." aria-label="Search employees">
+                  </div>
+                  <button class="btn btn-quiet d-flex align-items-center gap-2" id="filterButton" type="button"><span>Filter</span><span class="small">☷</span></button>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-hover align-middle" id="employeeTable">
+                  <thead><tr><th>SN</th><th>Employee</th><th>Phone Number</th><th>Position</th><th>Status</th><th>Salary</th><th class="text-end">Action</th></tr></thead>
+                  <tbody>
+                    <tr><td>1</td><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=47" alt=""><span class="fw-medium">Skly Herd</span></div></td><td>+880 1234 56789</td><td>Full Stack Developer</td><td><span class="badge rounded-pill badge-soft-success">Active</span></td><td>$34,000</td><td class="text-end"><button class="btn btn-sm btn-quiet" aria-label="Edit Skly Herd"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"/></svg></button><button class="btn btn-sm btn-quiet ms-1" aria-label="More options for Skly Herd"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>2</td><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=44" alt=""><span class="fw-medium">Alex Johnson</span></div></td><td>+880 9876 54321</td><td>Product Manager</td><td><span class="badge rounded-pill badge-soft-warning">On leave</span></td><td>$40,500</td><td class="text-end"><button class="btn btn-sm btn-quiet" aria-label="Edit Alex Johnson"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"/></svg></button><button class="btn btn-sm btn-quiet ms-1" aria-label="More options for Alex Johnson"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>3</td><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=49" alt=""><span class="fw-medium">Megan Ford</span></div></td><td>+880 3456 78123</td><td>Senior Developer</td><td><span class="badge rounded-pill badge-soft-danger">Resigned</span></td><td>$50,000</td><td class="text-end"><button class="btn btn-sm btn-quiet" aria-label="Edit Megan Ford"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"/></svg></button><button class="btn btn-sm btn-quiet ms-1" aria-label="More options for Megan Ford"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>4</td><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=12" alt=""><span class="fw-medium">Olivia White</span></div></td><td>+880 5555 55555</td><td>HR Specialist</td><td><span class="badge rounded-pill badge-soft-success">Active</span></td><td>$45,000</td><td class="text-end"><button class="btn btn-sm btn-quiet" aria-label="Edit Olivia White"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"/></svg></button><button class="btn btn-sm btn-quiet ms-1" aria-label="More options for Olivia White"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>5</td><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=13" alt=""><span class="fw-medium">John Doe</span></div></td><td>+880 8765 43210</td><td>Software Engineer</td><td><span class="badge rounded-pill badge-soft-warning">On leave</span></td><td>$36,000</td><td class="text-end"><button class="btn btn-sm btn-quiet" aria-label="Edit John Doe"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"/></svg></button><button class="btn btn-sm btn-quiet ms-1" aria-label="More options for John Doe"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>6</td><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=45" alt=""><span class="fw-medium">Sophia Smith</span></div></td><td>+880 1346 79258</td><td>UI/UX Designer</td><td><span class="badge rounded-pill badge-soft-success">Active</span></td><td>$38,000</td><td class="text-end"><button class="btn btn-sm btn-quiet" aria-label="Edit Sophia Smith"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"/></svg></button><button class="btn btn-sm btn-quiet ms-1" aria-label="More options for Sophia Smith"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>7</td><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=11" alt=""><span class="fw-medium">Michael Taylor</span></div></td><td>+880 8765 98432</td><td>Sales Manager</td><td><span class="badge rounded-pill badge-soft-info">On tour</span></td><td>$60,000</td><td class="text-end"><button class="btn btn-sm btn-quiet" aria-label="Edit Michael Taylor"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"/></svg></button><button class="btn btn-sm btn-quiet ms-1" aria-label="More options for Michael Taylor"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>8</td><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=68" alt=""><span class="fw-medium">Liam Williams</span></div></td><td>+880 1432 58987</td><td>Product Designer</td><td><span class="badge rounded-pill badge-soft-warning">Internship</span></td><td>$55,000</td><td class="text-end"><button class="btn btn-sm btn-quiet" aria-label="Edit Liam Williams"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"/></svg></button><button class="btn btn-sm btn-quiet ms-1" aria-label="More options for Liam Williams"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>9</td><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=5" alt=""><span class="fw-medium">Amelia Harris</span></div></td><td>+880 2134 78965</td><td>Marketing Lead</td><td><span class="badge rounded-pill badge-soft-danger">Inactive</span></td><td>$48,000</td><td class="text-end"><button class="btn btn-sm btn-quiet" aria-label="Edit Amelia Harris"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"/></svg></button><button class="btn btn-sm btn-quiet ms-1" aria-label="More options for Amelia Harris"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>10</td><td><div class="d-flex align-items-center gap-2"><img class="avatar avatar-sm" src="https://i.pravatar.cc/80?img=14" alt=""><span class="fw-medium">Ethan Clark</span></div></td><td>+880 3246 78251</td><td>DevOps Engineer</td><td><span class="badge rounded-pill badge-soft-info">Remote</span></td><td>$42,000</td><td class="text-end"><button class="btn btn-sm btn-quiet" aria-label="Edit Ethan Clark"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"/></svg></button><button class="btn btn-sm btn-quiet ms-1" aria-label="More options for Ethan Clark"><svg width="16" height="16" fill="currentColor"><use href="#i-more"/></svg></button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-3">
+                <div class="small muted">Showing <span id="showingCount">10</span> of 1,250 employees</div>
+                <nav aria-label="Employee list pages"><ul class="pagination pagination-sm mb-0">
+                  <li class="page-item disabled"><a class="page-link bg-transparent border-secondary text-secondary" href="#" tabindex="-1" aria-disabled="true">Previous</a></li>
+                  <li class="page-item active"><a class="page-link border-primary bg-primary" href="#">1</a></li><li class="page-item"><a class="page-link bg-transparent border-secondary text-light" href="#">2</a></li><li class="page-item"><a class="page-link bg-transparent border-secondary text-light" href="#">3</a></li><li class="page-item disabled"><span class="page-link bg-transparent border-secondary text-secondary">...</span></li><li class="page-item"><a class="page-link bg-transparent border-secondary text-light" href="#">125</a></li><li class="page-item"><a class="page-link bg-transparent border-secondary text-light" href="#">Next</a></li>
+                </ul></nav>
+              </div>
+            </article>
+          </section>
+          <footer class="text-center muted small py-4">© 2025 Conca. All rights reserved.</footer>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered"><form class="modal-content" id="addEmployeeForm">
+        <div class="modal-header"><h2 class="modal-title fs-5" id="addEmployeeLabel">Add employee</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="modal-body">
+          <div class="mb-3"><label class="form-label" for="employeeName">Full name</label><input class="form-control" id="employeeName" name="name" required></div>
+          <div class="mb-3"><label class="form-label" for="employeePosition">Position</label><input class="form-control" id="employeePosition" name="position" required></div>
+          <div><label class="form-label" for="employeeEmail">Email address</label><input class="form-control" type="email" id="employeeEmail" name="email" required></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-quiet" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Add employee</button></div>
+      </form></div>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="dashboardToast" class="toast text-bg-dark border-secondary" role="status" aria-live="polite" aria-atomic="true">
+        <div class="d-flex"><div class="toast-body" id="toastMessage">Done.</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>
+      </div>
+    </div>
+
+    <script src="./assets/vendor/bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const employeeSearch = document.querySelector("#employeeSearch");
+      const globalSearch = document.querySelector("#globalSearch");
+      const employeeRows = [...document.querySelectorAll("#employeeTable tbody tr")];
+      const addEmployeeModal = document.querySelector("#addEmployeeModal");
+      const addEmployeeTrigger = document.querySelector('[data-bs-target="#addEmployeeModal"]');
+      const toast = new bootstrap.Toast(document.querySelector("#dashboardToast"));
+
+      const sidebarSubmenuItems = {
+        Dashboard: ["Overview", "Analytics", "Widgets"],
+        "User Profile": ["Profile", "Edit Profile", "Profile Settings"],
+        Account: ["Account Settings", "Security", "Notifications"],
+        Users: ["All Users", "Add User", "Roles & Permissions"],
+        Ecommerce: ["Products", "Orders", "Customers"],
+        LMS: ["Courses", "Lessons", "Certificates"],
+        "User Interface": ["Alerts", "Buttons", "Cards"],
+        "Extended UI": ["Modals", "Tabs", "Accordions"],
+        "Form Elements": ["Inputs", "Selects", "Validation"],
+        "Apex Chart": ["Line Chart", "Bar Chart", "Area Chart"],
+        Maps: ["Google Maps", "Leaflet Maps"],
+        Tables: ["Basic Tables", "Data Tables"]
+      };
+
+      document.querySelectorAll("#appSidebar .sidebar-menu > nav > .nav-link").forEach((trigger) => {
+        const label = trigger.querySelector(".sidebar-label")?.textContent.trim();
+        const items = sidebarSubmenuItems[label];
+        if (!label || !items) return;
+
+        const menuId = `${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-submenu`;
+        const group = document.createElement("div");
+        group.className = "sidebar-group";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = trigger.className;
+        button.innerHTML = trigger.innerHTML;
+        button.setAttribute("aria-label", `Toggle ${label} menu`);
+        button.setAttribute("aria-expanded", "false");
+        button.setAttribute("aria-controls", menuId);
+        button.dataset.bsToggle = "collapse";
+        button.dataset.bsTarget = `#${menuId}`;
+
+        const submenu = document.createElement("div");
+        submenu.className = "collapse sidebar-submenu";
+        submenu.id = menuId;
+        submenu.innerHTML = `<nav class="nav flex-column" aria-label="${label} pages">${items.map((item) =>
+          `<a class="nav-link d-flex align-items-center" href="#${item.toLowerCase().replace(/[^a-z0-9]+/g, "-")}"><span>${item}</span><svg fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#i-chevron"/></svg></a>`
+        ).join("")}</nav>`;
+
+        trigger.replaceWith(group);
+        group.append(button, submenu);
+      });
+
+      addEmployeeModal.addEventListener("hide.bs.modal", () => {
+        if (addEmployeeModal.contains(document.activeElement)) document.activeElement.blur();
+      });
+      addEmployeeModal.addEventListener("hidden.bs.modal", () => addEmployeeTrigger.focus());
+
+      function showToast(message) {
+        document.querySelector("#toastMessage").textContent = message;
+        toast.show();
+      }
+
+      const notificationList = document.querySelector("#notificationList");
+      const notificationCount = document.querySelector("#notificationCount");
+      const updateNotificationCount = () => {
+        const count = notificationList.querySelectorAll("[data-notification]").length;
+        notificationCount.textContent = count;
+        notificationCount.classList.toggle("d-none", count === 0);
+        if (count === 0 && !notificationList.querySelector("[data-empty-notifications]")) {
+          const emptyMessage = document.createElement("li");
+          emptyMessage.className = "list-group-item text-center text-secondary py-4";
+          emptyMessage.dataset.emptyNotifications = "";
+          emptyMessage.textContent = "You're all caught up.";
+          notificationList.append(emptyMessage);
+        }
+      };
+
+      notificationList.addEventListener("click", (event) => {
+        if (!event.target.closest(".notification-dismiss")) return;
+        event.target.closest("[data-notification]").remove();
+        updateNotificationCount();
+      });
+
+      document.querySelector("#clearNotifications").addEventListener("click", () => {
+        notificationList.querySelectorAll("[data-notification]").forEach((item) => item.remove());
+        updateNotificationCount();
+      });
+
+      document.querySelectorAll(".language-option").forEach((option) => {
+        option.addEventListener("click", () => {
+          document.querySelectorAll(".language-option").forEach((item) => item.classList.remove("active"));
+          option.classList.add("active");
+          document.querySelector("#selectedLanguageFlag").setAttribute("href", option.dataset.flag);
+          document.querySelector("#languageDropdown").setAttribute("aria-label", `Language: ${option.dataset.language}`);
+        });
+      });
+
+      function filterEmployees(query) {
+        const normalized = query.trim().toLowerCase();
+        let visible = 0;
+        employeeRows.forEach((row) => {
+          const matches = row.textContent.toLowerCase().includes(normalized);
+          row.classList.toggle("d-none", !matches);
+          if (matches) visible += 1;
+        });
+        document.querySelector("#showingCount").textContent = visible;
+      }
+
+      const sidebar = document.querySelector("#appSidebar");
+      const desktopHover = window.matchMedia("(min-width: 992px) and (hover: hover)");
+      const setSidebarCollapsed = (collapsed) => {
+        sidebar.classList.toggle("sidebar-labels-hidden", collapsed);
+        sidebar.classList.toggle("sidebar-collapsed", collapsed);
+      };
+
+      sidebar.addEventListener("pointerenter", (event) => {
+        if (!desktopHover.matches) return;
+        setSidebarCollapsed(event.clientX <= sidebar.getBoundingClientRect().left + 80);
+      });
+      sidebar.addEventListener("pointermove", (event) => {
+        if (!desktopHover.matches) return;
+        setSidebarCollapsed(event.clientX <= sidebar.getBoundingClientRect().left + 80);
+      });
+      sidebar.addEventListener("pointerleave", () => {
+        setSidebarCollapsed(false);
+      });
+
+      employeeSearch.addEventListener("input", () => filterEmployees(employeeSearch.value));
+      globalSearch.addEventListener("input", () => {
+        employeeSearch.value = globalSearch.value;
+        filterEmployees(globalSearch.value);
+        if (globalSearch.value) document.querySelector("#employees").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      document.querySelector("#exportButton").addEventListener("click", () => {
+        const rows = [...document.querySelectorAll("#employeeTable tr")].map((row) =>
+          [...row.querySelectorAll("th, td")].slice(0, 6).map((cell) => `"${cell.innerText.trim().replaceAll('"', '""')}"`).join(",")
+        );
+        const file = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(file);
+        link.download = "employees.csv";
+        link.click();
+        URL.revokeObjectURL(link.href);
+      });
+
+      document.querySelector("#addEmployeeForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!event.currentTarget.reportValidity()) return;
+        const formData = new FormData(event.currentTarget);
+        const row = document.createElement("tr");
+        const values = ["—", formData.get("name"), "—", formData.get("position"), "New", "—"];
+        values.forEach((value, index) => {
+          const cell = document.createElement("td");
+          if (index === 1) {
+            const wrapper = document.createElement("div");
+            wrapper.className = "d-flex align-items-center gap-2";
+            const name = document.createElement("span");
+            name.className = "fw-medium";
+            name.textContent = value;
+            wrapper.append(name);
+            cell.append(wrapper);
+          } else if (index === 4) {
+            const badge = document.createElement("span");
+            badge.className = "badge rounded-pill badge-soft-info";
+            badge.textContent = value;
+            cell.append(badge);
+          } else {
+            cell.textContent = value;
+          }
+          row.append(cell);
+        });
+        const actions = document.createElement("td");
+        actions.className = "text-end";
+        actions.textContent = "—";
+        row.append(actions);
+        document.querySelector("#employeeTable tbody").prepend(row);
+        employeeRows.unshift(row);
+        filterEmployees(employeeSearch.value);
+        bootstrap.Modal.getInstance(document.querySelector("#addEmployeeModal")).hide();
+        event.currentTarget.reset();
+        showToast("Employee added to the list.");
+      });
+
+      document.querySelector("#filterButton").addEventListener("click", () => {
+        const current = employeeSearch.value;
+        employeeSearch.value = current ? "" : "Active";
+        filterEmployees(employeeSearch.value);
+      });
+
+      document.querySelectorAll(".period-option").forEach((option) => {
+        option.addEventListener("click", () => {
+          option.closest(".dropdown").querySelector(".dropdown-toggle").textContent = option.textContent;
+        });
+      });
+
+      document.querySelectorAll(".leave-action").forEach((button) => {
+        button.addEventListener("click", () => showToast("Leave request options are ready to review."));
+      });
+    </script>
+  </body>
+</html>
